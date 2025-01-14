@@ -1,9 +1,17 @@
 import React from 'react'
 import { Link } from 'react-router-dom';
 import { FaSearch } from 'react-icons/fa';
+import { useDispatch, useSelector } from 'react-redux';
+import { FaMoon, FaSun } from 'react-icons/fa';
+import { toggleTheme } from '../../redux/slices/themeSlice';
+
 
 
 export default function Navbar({isScrolled, handleSubmit, setSearchTerm, searchTerm}) {
+
+    const dispatch = useDispatch();
+    const { theme } = useSelector((state) => state.theme);
+
 
 
     return (
@@ -33,12 +41,12 @@ export default function Navbar({isScrolled, handleSubmit, setSearchTerm, searchT
                     </form>
                     <div className='flex items-center gap-4 font-medium text-lg'>
                         <Link to='/'>
-                            <div className='hidden sm:inline text-slate-700 hover:text-blue-600 hover:text-xl transition-all duration-300'>
+                            <div className='hidden sm:inline text-slate-700 dark:text-slate-200 hover:text-blue-600 hover:text-xl transition-all duration-300'>
                                 Home
                             </div>
                         </Link>
                         <Link to='/about'>
-                            <div className='hidden sm:inline text-slate-700 hover:text-blue-600 hover:text-xl transition-all duration-300'>
+                            <div className='hidden sm:inline text-slate-700 dark:text-slate-200 hover:text-blue-600 hover:text-xl transition-all duration-300'>
                                 About
                             </div>
                         </Link>
@@ -48,6 +56,14 @@ export default function Navbar({isScrolled, handleSubmit, setSearchTerm, searchT
                                 Sign in
                             </div>
                         </Link>
+                        <button
+                            className="h-10 inline"
+                            color="gray"
+                            pill
+                            onClick={() => dispatch(toggleTheme())}
+                            >
+                            {theme === 'light' ? <FaMoon /> : <FaSun />}
+                        </button>
                     </div>
 
                 </div>
