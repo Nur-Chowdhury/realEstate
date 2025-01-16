@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react'
 import Header from '../Components/Header'
 import Navbar from '../Components/Home/Navbar';
 import { useNavigate } from 'react-router-dom';
-import hero from '../assets/hero2.jpg';
+import hero from '../assets/hero5.jpg';
+import { FaSearch } from 'react-icons/fa';
+
 
 export default function Home() {
 
@@ -49,7 +51,33 @@ export default function Home() {
                 }`} 
                 style={{ backgroundImage: `url(${hero})` }}
             >
-
+                <div className=' h-full flex flex-col text-5xl font-extrabold py-16 text-teal-100 mx-16'>
+                    <div className=' flex flex-col gap-1 items-center lg:items-start'>
+                        <h1>Welcome to</h1>
+                        <h1><span className=' text-blue-700'>Nest</span><span className=' text-green-700'>Finder</span></h1>
+                        <h1 className=''>Your Future Home Awaits</h1>
+                    </div>
+                    <div className=' flex justify-center my-40 text-lg'>
+                        <form
+                            id="search-bar"
+                            onSubmit={handleSubmit}
+                            className={`bg-slate-100 p-3 rounded-lg flex items-center ${isScrolled ? "hidden":""} `}
+                            // 
+                        >
+                            {console.log(isScrolled)}
+                            <input
+                                type='text'
+                                placeholder='Search...'
+                                className='bg-transparent focus:outline-none w-24 sm:w-96 text-black font-normal'
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                            />
+                            <button type='submit'>
+                                <FaSearch className='text-slate-600' />
+                            </button>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
     )

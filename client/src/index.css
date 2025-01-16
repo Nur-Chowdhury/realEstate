@@ -9,3 +9,7 @@
 body { 
     @apply font-montserrat; 
 }
+
+.theme-transition {
+    transition: background-color 0.5s, color 0.5s;
+}
