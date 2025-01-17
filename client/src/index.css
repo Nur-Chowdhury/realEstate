@@ -13,3 +13,12 @@ body {
 .theme-transition {
     transition: background-color 0.5s, color 0.5s;
 }
+
+.slick-slide {
+    height: auto !important;
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+    padding-top: 30px;
+  }
+  
