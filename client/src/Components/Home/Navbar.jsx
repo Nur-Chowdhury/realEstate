@@ -21,7 +21,7 @@ export default function Navbar({ isScrolled, handleSubmit, setSearchTerm, search
     window.addEventListener('scroll', addBgColor);
 
     return (
-        <div className={`${noBg ? 'fixed z-10 w-full bg-white dark:bg-black transition-all duration-500' : ''}`}>
+        <div className={`${noBg ? 'fixed z-50 w-full bg-white dark:bg-black transition-all duration-500' : ''}`}>
             <header className={`h-16 ${!isScrolled ? 'py-2' : ''}`}>
                 <div className='flex justify-between items-center max-w-6xl mx-auto p-3'>
                     <Link to='/'>

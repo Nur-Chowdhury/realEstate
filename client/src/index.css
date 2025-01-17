@@ -20,5 +20,15 @@ body {
     justify-content: center;
     align-items: center;
     padding-top: 30px;
+}
+
+/* Slick Dots in Light Mode */
+.slick-dots li button:before {
+    color: black;
   }
+  
+  /* Slick Dots in Dark Mode */
+.dark .slick-dots li button:before {
+    color: white;
+}
   

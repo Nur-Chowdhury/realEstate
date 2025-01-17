@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import hero from '../assets/hero3.jpg';
 import { FaSearch } from 'react-icons/fa';
 import Showcase from '../Components/Home/Showcase';
+import BlogPart from '../Components/Home/BlogPart';
 
 export default function Home() {
     const [isScrolled, setIsScrolled] = useState(false);
@@ -99,9 +100,8 @@ export default function Home() {
             <div className=' my-16 '>
                 <Showcase />
             </div>
-            <div className=' h-[1px] bg-black dark:bg-white my-4 mx-20'></div>
             <div className=' my-16'>
-
+                <BlogPart />
             </div>
         </div>
     );
