@@ -6,6 +6,9 @@ import hero from '../assets/hero3.jpg';
 import { FaSearch } from 'react-icons/fa';
 import Showcase from '../Components/Home/Showcase';
 import BlogPart from '../Components/Home/BlogPart';
+import ContactUs from '../Components/Home/ContactUs';
+import FeedbackCard from '../Components/FeedbackCard';
+import CustomerFeedback from '../Components/Home/CustomerFeedback';
 
 export default function Home() {
     const [isScrolled, setIsScrolled] = useState(false);
@@ -102,6 +105,16 @@ export default function Home() {
             </div>
             <div className=' my-16'>
                 <BlogPart />
+            </div>
+
+            <div className=' my-16'>
+                <CustomerFeedback />
+            </div>
+
+            <div className=' h-[1px] mx-20 my-4 bg-black'></div>
+
+            <div className=' mt-16'>
+                <ContactUs />
             </div>
         </div>
     );

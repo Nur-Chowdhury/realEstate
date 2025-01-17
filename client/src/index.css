@@ -22,6 +22,10 @@ body {
     padding-top: 30px;
 }
 
+.feedback .slick-slide{
+    padding-bottom: 80px;
+}
+
 /* Slick Dots in Light Mode */
 .slick-dots li button:before {
     color: black;
