@@ -1,21 +1,27 @@
 import React, { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FaSearch, FaMoon, FaSun } from 'react-icons/fa';
-import { toggleTheme } from '../redux/slices/themeSlice';
+import ThemeProvider from './ThemeProvider'
+import { useSelector } from 'react-redux';
 
 
 export default function Nav() {
 
-    const { theme } = useSelector((state) => state.theme);
     const [searchTerm, setSearchTerm] = useState('');
-    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const handleSubmit = (e) => {
-        console.log("hi");
+        e.preventDefault();
+        const urlParams = new URLSearchParams(window.location.search);
+        urlParams.set('searchTerm', searchTerm);
+        const searchQuery = urlParams.toString();
+        navigate(`/search?${searchQuery}`);
     }
 
+    const { currentUser } = useSelector((state) => state.user);
 
+    console.log(currentUser);
+    
     return (
         <div className={`''`}>
             <header className={` h-20 py-2 border-b-2 border-b-green-500 flex flex-col justify-center`}>
@@ -33,7 +39,7 @@ export default function Nav() {
                         <input
                             type='text'
                             placeholder='Search...'
-                            className='bg-transparent focus:outline-none w-24 sm:w-64'
+                            className='bg-transparent text-gray-700 focus:outline-none w-24 sm:w-64'
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
@@ -52,19 +58,22 @@ export default function Nav() {
                                 About
                             </div>
                         </Link>
-                        <Link to='/login'>
-                            <div className='text-white px-2 py-1 rounded bg-blue-700 hover:border-2 hover:border-blue-700 hover:bg-transparent hover:text-blue-700'>
-                                Sign in
-                            </div>
-                        </Link>
-                        <button
-                            className='h-10 inline'
-                            color='gray'
-                            pill
-                            onClick={() => dispatch(toggleTheme())}
-                        >
-                            {theme === 'light' ? <FaMoon /> : <FaSun />}
-                        </button>
+                        {currentUser ? (
+                            <Link to={`/profile/${currentUser._id}`}>
+                                <img
+                                    className='rounded-full h-10 w-10 object-cover'
+                                    src={currentUser.avatar}
+                                    alt='profile'
+                                />
+                            </Link>
+                        ):(
+                            <Link to='/login'>
+                                <div className='text-white px-2 py-1 rounded bg-blue-700 hover:border-2 hover:border-blue-700 hover:bg-transparent hover:text-blue-700'>
+                                    Sign in
+                                </div>
+                            </Link>
+                        )}
+                        <ThemeProvider /> 
                     </div>
                 </div>
             </header>

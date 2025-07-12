@@ -6,7 +6,6 @@ import user from '../assets/user3.jpg'
 export default function FeedbackCard({feedback}) {
     return (
         <div className="">
-            {/* Single Traveler Card */}
             <div className="relative group w-[350px] h-[500px] overflow-hidden rounded-2xl shadow-2xl shadow-gray-500 dark:shadow-gray-700 border-[1px] border-green-500">
                 <p className=' h-[70%] text-center py-4 px-2 leading-10'>{feedback.des}</p>
     

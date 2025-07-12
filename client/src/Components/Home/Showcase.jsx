@@ -120,7 +120,6 @@ export default function Showcase() {
                 { type ===1 && (
                     <Slider  {...settings}>
                         {data.map((item, index) => {
-                            console.log(item); // Debugging: Check if items are being logged
                             return (<Cards key={index} item={item} />)
                         })}
                     </Slider>
@@ -128,7 +127,6 @@ export default function Showcase() {
                 { type ===2 && (
                     <Slider  {...settings}>
                         {data2.map((item, index) => {
-                            console.log(item); // Debugging: Check if items are being logged
                             return (<Cards key={index} item={item} />)
                         })}
                     </Slider>
@@ -136,7 +134,6 @@ export default function Showcase() {
                 { type ===3 && (
                     <Slider  {...settings}>
                         {data3.map((item, index) => {
-                            console.log(item); // Debugging: Check if items are being logged
                             return (<Cards key={index} item={item} />)
                         })}
                     </Slider>

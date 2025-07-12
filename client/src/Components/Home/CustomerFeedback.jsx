@@ -52,7 +52,7 @@ export default function CustomerFeedback() {
                 <Slider  {...settings}>
                     {feedbacks.map((feedback, index) => {
                         return (<FeedbackCard key={index} feedback={feedback} />)
-                    })}
+                    })} 
                 </Slider>
             </div>
         </div>

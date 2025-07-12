@@ -3,11 +3,9 @@ import { Link } from 'react-router-dom';
 import { FaSearch } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
 import { FaMoon, FaSun } from 'react-icons/fa';
-import { toggleTheme } from '../../redux/slices/themeSlice';
+import ThemeProvider from '../ThemeProvider';
 
 export default function Navbar({ isScrolled, handleSubmit, setSearchTerm, searchTerm }) {
-    const dispatch = useDispatch();
-    const { theme } = useSelector((state) => state.theme);
 
     const [noBg, setNoBg] = useState(false);
     const addBgColor = () => {
@@ -18,12 +16,14 @@ export default function Navbar({ isScrolled, handleSubmit, setSearchTerm, search
         }
     };
 
+    const { currentUser } = useSelector((state) => state.user);
+
     window.addEventListener('scroll', addBgColor);
 
     return (
-        <div className={`${noBg ? 'fixed z-50 w-full bg-white dark:bg-black transition-all duration-500' : ''}`}>
-            <header className={`h-16 ${!isScrolled ? 'py-2' : ''}`}>
-                <div className='flex justify-between items-center max-w-6xl mx-auto p-3'>
+        <div className={`${noBg ? 'fixed z-50 w-full bg-white dark:bg-black transition-all duration-500 border-b-2 border-b-green-500' : ''}`}>
+            <header className={`h-18 ${!isScrolled ? '' : ''}`}>
+                <div className='flex justify-between items-center max-w-6xl mx-auto py-3'>
                     <Link to='/'>
                         <h1 className='font-bold text-sm sm:text-3xl flex flex-wrap'>
                             <span className='text-blue-500'>Nest</span>
@@ -58,19 +58,22 @@ export default function Navbar({ isScrolled, handleSubmit, setSearchTerm, search
                                 About
                             </div>
                         </Link>
-                        <Link to='/login'>
-                            <div className='text-white px-2 py-1 rounded bg-blue-700 hover:border-2 hover:border-blue-700 hover:bg-transparent hover:text-blue-700'>
-                                Sign in
-                            </div>
-                        </Link>
-                        <button
-                            className='h-10 inline'
-                            color='gray'
-                            pill
-                            onClick={() => dispatch(toggleTheme())}
-                        >
-                            {theme === 'light' ? <FaMoon /> : <FaSun />}
-                        </button>
+                        {currentUser ? (
+                            <Link to={`/profile/${currentUser._id}`}>
+                                <img
+                                    className='rounded-full h-10 w-10 object-cover'
+                                    src={currentUser.avatar}
+                                    alt='profile'
+                                />
+                            </Link>
+                        ):(
+                            <Link to='/login'>
+                                <div className='text-white px-2 py-1 rounded bg-blue-700 hover:border-2 hover:border-blue-700 hover:bg-transparent hover:text-blue-700'>
+                                    Sign in
+                                </div>
+                            </Link>
+                        )}
+                        <ThemeProvider />
                     </div>
                 </div>
             </header>
