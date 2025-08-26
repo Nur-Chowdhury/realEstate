@@ -46,7 +46,7 @@ export default function CreateListing() {
                 setUploading(false);
             })
             .catch((err) => {
-                toast.error('Image upload failed (2 mb max per image)');
+                toast.error('Image upload failed (6 mb max per image)');
                 setUploading(false);
             });
         } else {
@@ -57,7 +57,7 @@ export default function CreateListing() {
 
     const storeImage = async (file) => {
         return new Promise(async (resolve, reject) => {
-            if (file.size > 2 * 1024 * 1024) {
+            if (file.size > 6 * 1024 * 1024) {
                 return reject(new Error('File too large'));
             }
 
