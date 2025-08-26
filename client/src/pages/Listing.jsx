@@ -14,9 +14,9 @@ import {
     FaParking,
     FaShare,
 } from 'react-icons/fa';
-import Contact from '../components/Contact';
 import Nav from '../Components/Nav'
 import { toast } from 'react-toastify';
+import Contact from '../Components/Contact';
 
 const customStyles = `
     .swiper-pagination-bullet {
