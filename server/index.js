@@ -6,13 +6,14 @@ import connectToDatabase from './db.js';
 import userRouter from './router/userRoutes.js';
 import authRouter from './router/authRoutes.js';
 import listingRouter from './router/listingRoutes.js';
+import path from 'path';
 
 dotenv.config();
 
 connectToDatabase();
 
 const app = express();
-
+const __dirname = path.resolve();
 app.use(express.json());
 
 app.use(cookieParser());
@@ -26,6 +27,14 @@ app.listen(port, () => {
 app.use('/api/user', userRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/listing', listingRouter);
+
+if (process.env.NODE_ENV === "production") {
+	app.use(express.static(path.join(__dirname, "/client/dist")));
+
+	app.get("*", (req, res) => {
+		res.sendFile(path.resolve(__dirname, "client", "dist", "index.html"));
+	});
+}
 
 app.use((error, req, res, next) => {
     const statusCode = error.statusCode || 500;

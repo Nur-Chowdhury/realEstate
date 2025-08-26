@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import OAuth from '../Components/OAuth';
 import {toast} from 'react-toastify';
 import Nav from '../Components/Nav'
 
