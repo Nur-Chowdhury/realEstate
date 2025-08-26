@@ -1,13 +1,6 @@
 import { useSelector } from 'react-redux';
 import { useRef, useState, useEffect } from 'react';
 import {
-  getDownloadURL,
-  getStorage,
-  ref,
-  uploadBytesResumable,
-} from 'firebase/storage';
-import { app } from '../firebase';
-import {
   updateUserStart,
   updateUserSuccess,
   updateUserFailure,
@@ -22,6 +15,8 @@ import Nav from '../Components/Nav';
 import { FaTrashAlt } from "react-icons/fa";
 import { FiLogOut } from "react-icons/fi";
 import { toast } from 'react-toastify';
+import { supabase } from '../supabase';
+import { set } from 'mongoose';
 
 export default function Profile() {
 
@@ -36,6 +31,8 @@ export default function Profile() {
     const [userListings, setUserListings] = useState([]);
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const [showListings, setShowListings] = useState(false);
+
 
     useEffect(() => {
         if (file) {
@@ -43,35 +40,59 @@ export default function Profile() {
         }
     }, [file]);
 
-    const handleFileUpload = (file) => {
-        const storage = getStorage(app);
-        const fileName = new Date().getTime() + file.name;
-        const storageRef = ref(storage, fileName);
-        const uploadTask = uploadBytesResumable(storageRef, file);
+    const handleFileUpload = async (file) => {
+        const fileName = `${Date.now()}_${file.name}`;
 
-        //console.log(storage, storageRef, uploadTask);
-        console.log(file);
-    
-        uploadTask.on(
-            'state_changed',
-            (snapshot) => {
-                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                setFilePerc(Math.round(progress));
-                console.log(`Upload is ${progress}% done`);
-            },
-            (error) => {
-                console.error("Upload failed:", error);
-                toast.error("Error Image upload (image must be less than 2 mb)");
-                setFileUploadError(true);
-            },
-            () => {
-                getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                    console.log("File available at", downloadURL);
-                    setFormData((prevFormData) => ({ ...prevFormData, avatar: downloadURL }));
-                    console.log("FormData updated:", formData);
-                });
+        const { data: signedUrlData, error: signedUrlError } = await supabase.storage
+            .from('img_bkt')
+            .createSignedUploadUrl(fileName);
+
+        if (signedUrlError) {
+            console.log('Failed to get signed URL:', signedUrlError.message);
+            toast.error("Error preparing upload!");
+            setFileUploadError(true);
+            return;
+        }
+
+        const uploadUrl = signedUrlData?.signedUrl;
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('PUT', uploadUrl, true);
+        xhr.setRequestHeader('Content-Type', file.type);
+
+        xhr.upload.onprogress = (event) => {
+            if (event.lengthComputable) {
+                const percent = Math.round((event.loaded / event.total) * 100);
+                setFilePerc(percent);
             }
-        );
+        };
+
+        xhr.onload = async () => {
+            if (xhr.status === 200) {
+                const { data: urlData } = supabase.storage
+                    .from('img_bkt')
+                    .getPublicUrl(fileName);
+
+                const publicUrl = urlData?.publicUrl;
+
+                setFormData((prevFormData) => ({
+                    ...prevFormData,
+                    avatar: publicUrl,
+                }));
+            } else {
+                console.log("Upload failed with status:", xhr.status);
+                toast.error("Upload failed");
+                setFileUploadError(true);
+            }
+        };
+
+        xhr.onerror = () => {
+            console.error("XHR upload error");
+            toast.error("Upload error");
+            setFileUploadError(true);
+        };
+
+        xhr.send(file);
     };
     
 
@@ -148,6 +169,7 @@ export default function Profile() {
 
     const handleShowListings = async () => {
         try {
+            setShowListings(true);
             setShowListingsError(false);
             const res = await fetch(`/api/user/listings/${currentUser._id}`);
             const data = await res.json();
@@ -180,6 +202,10 @@ export default function Profile() {
             toast.error(error.message);
         }
     };
+
+    const hideListings = () => {
+        setShowListings(false);
+    }
 
     return (
         <div>
@@ -265,11 +291,11 @@ export default function Profile() {
                         <span>Sign Out</span><FiLogOut />
                     </div>
                 </div>
-                <button onClick={handleShowListings} className='text-green-700 text-xl font-semibold w-full mt-2'>
-                    Show Listings
+                <button onClick={showListings ? hideListings : handleShowListings} className='text-green-700 text-xl font-semibold w-full mt-2'>
+                    {showListings ? "Hide":"Show"} Listings
                 </button>
 
-                {userListings && userListings.length > 0 ? (
+                {showListings && (userListings && userListings.length > 0 ? (
                     <div className='flex flex-col gap-4'>
                         <h1 className='text-center mt-7 text-2xl font-semibold'>
                             Your Listings
@@ -311,7 +337,7 @@ export default function Profile() {
                     <h1 className='text-center mt-4 text-2xl font-semibold'>
                         No Listing to show!
                     </h1>
-                )}
+                ))}
 
             </div>
         </div>

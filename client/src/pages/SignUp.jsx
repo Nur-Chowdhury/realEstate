@@ -68,7 +68,7 @@ export default function SignUp() {
                     <input
                         type='password'
                         placeholder='password'
-                        className='border p-3 rounded-lg text-2xl font-bold'
+                        className='border p-3 rounded-lg'
                         id='password'
                         onChange={handleChange}
                     />
@@ -80,7 +80,6 @@ export default function SignUp() {
                     >
                         {loading ? 'Loading...' : 'Sign Up'}
                     </button>
-                    <OAuth />
                 </form>
                 <div className='flex gap-2 mt-5'>
                     <p>Have an account?</p>

@@ -18,10 +18,7 @@ export default function Nav() {
         navigate(`/search?${searchQuery}`);
     }
 
-    const { currentUser } = useSelector((state) => state.user);
-
-    console.log(currentUser);
-    
+    const { currentUser } = useSelector((state) => state.user);    
     return (
         <div className={`''`}>
             <header className={` h-20 py-2 border-b-2 border-b-green-500 flex flex-col justify-center`}>
@@ -38,7 +35,7 @@ export default function Nav() {
                     >
                         <input
                             type='text'
-                            placeholder='Search...'
+                            placeholder='Search Home...'
                             className='bg-transparent text-gray-700 focus:outline-none w-24 sm:w-64'
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}

@@ -1,15 +1,9 @@
 import { useState } from 'react';
-import {
-  getDownloadURL,
-  getStorage,
-  ref,
-  uploadBytesResumable,
-} from 'firebase/storage';
-import { app } from '../firebase';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Nav from '../Components/Nav'
 import { toast } from 'react-toastify';
+import { supabase } from '../supabase';
 
 export default function CreateListing() {
 
@@ -32,6 +26,7 @@ export default function CreateListing() {
     });
     const [uploading, setUploading] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [filePerc, setFilePerc] = useState(0);
 
     const handleImageSubmit = (e) => {
         if (files.length > 0 && files.length + formData.imageUrls.length < 7) {
@@ -43,6 +38,7 @@ export default function CreateListing() {
             }
             Promise.all(promises)
             .then((urls) => {
+                console.log(urls);
                 setFormData({
                     ...formData,
                     imageUrls: formData.imageUrls.concat(urls),
@@ -60,27 +56,55 @@ export default function CreateListing() {
     };
 
     const storeImage = async (file) => {
-        return new Promise((resolve, reject) => {
-            const storage = getStorage(app);
-            const fileName = new Date().getTime() + file.name;
-            const storageRef = ref(storage, fileName);
-            const uploadTask = uploadBytesResumable(storageRef, file);
-            uploadTask.on(
-                'state_changed',
-                (snapshot) => {
-                const progress =
-                    (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                    console.log(`Upload is ${progress}% done`);
-                },
-                (error) => {
-                    reject(error);
-                },
-                () => {
-                getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                    resolve(downloadURL);
-                });
+        return new Promise(async (resolve, reject) => {
+            if (file.size > 2 * 1024 * 1024) {
+                return reject(new Error('File too large'));
+            }
+
+            const fileName = `${Date.now()}_${file.name}`;
+            const { data: signedUrlData, error: signedUrlError } = await supabase.storage
+                .from('img_bkt')
+                .createSignedUploadUrl(fileName);
+
+            if (signedUrlError) {
+                console.log('Signed URL error:', signedUrlError.message);
+                return reject(signedUrlError);
+            }
+
+            const uploadUrl = signedUrlData?.signedUrl;
+            const xhr = new XMLHttpRequest();
+            xhr.open('PUT', uploadUrl, true);
+            xhr.setRequestHeader('Content-Type', file.type);
+
+            xhr.upload.onprogress = (event) => {
+                if (event.lengthComputable) {
+                    const percent = Math.round((event.loaded / event.total) * 100);
+                    setFilePerc(percent);
                 }
-            );
+            };
+
+            xhr.onload = async () => {
+                if (xhr.status === 200) {
+                    const { data: urlData, error: urlError } = supabase.storage
+                        .from('img_bkt')
+                        .getPublicUrl(fileName);
+
+                    if (urlError) {
+                        console.error('Public URL error:', urlError.message);
+                        return reject(urlError);
+                    }
+                    resolve(urlData.publicUrl);
+                } else {
+                    console.log('Upload failed with status:', xhr.status);
+                    reject(new Error(`Upload failed with status ${xhr.status}`));
+                }
+            };
+
+            xhr.onerror = () => {
+                console.log('XHR error during upload');
+                reject(new Error('XHR upload error'));
+            };
+            xhr.send(file);
         });
     };
 
