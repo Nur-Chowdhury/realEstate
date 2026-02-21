@@ -87,7 +87,7 @@ Make sure you have installed:
 
 ``` bash
 git clone https://github.com/Nur-Chowdhury/realEstate.git
-cd nestfinder
+cd realEstate
 ```
 
 ### 2️⃣ Install Backend Dependencies
@@ -181,7 +181,7 @@ Feel free to open an issue or submit a pull request.
 
 ## 📝 License
 
-This project is licensed under the ISC License.
+This project is open-source.
 
 ------------------------------------------------------------------------
 
